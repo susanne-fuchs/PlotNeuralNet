@@ -21,6 +21,10 @@ def to_cor():
 \def\FcReluColor{rgb:blue,5;red,5;white,4}
 \def\SoftmaxColor{rgb:magenta,5;black,7}   
 \def\SumColor{rgb:blue,5;green,15}
+\def\TransposeColor{rgb:blue,2;green,1;black,0.3}
+\def\CgBlockColor{rgb:magenta,5;red,2.5;black,7}
+\def\UpsampleColor{rgb:black,1;white,1}
+
 """
 
 def to_begin():
@@ -40,6 +44,21 @@ def to_input( pathfile, to='(-3,0,0)', width=8, height=8, name="temp" ):
 \node[canvas is zy plane at x=0] (""" + name + """) at """+ to +""" {\includegraphics[width="""+ str(width)+"cm"+""",height="""+ str(height)+"cm"+"""]{"""+ pathfile +"""}};
 """
 
+def to_Image(name, offset="(0,0,0)", to="(0,0,0)", width=1, height=40, depth=40, opacity=0, caption=" " ):
+    return r"""
+    \pic[shift={""" + offset + """}] at """ + to + """ 
+        {Box={
+            name=""" + name + """,
+            caption=""" + caption + r""",
+            fill=\ConvColor,
+            opacity="""+ str(opacity) +""",
+            height=""" + str(height) + """,
+            width=""" + str(width) + """,
+            depth=""" + str(depth) + """
+            }
+        };
+    """
+
 # Conv
 def to_Conv( name, s_filer=256, n_filer=64, offset="(0,0,0)", to="(0,0,0)", width=1, height=40, depth=40, caption=" " ):
     return r"""
@@ -50,6 +69,23 @@ def to_Conv( name, s_filer=256, n_filer=64, offset="(0,0,0)", to="(0,0,0)", widt
         xlabel={{"""+ str(n_filer) +""", }},
         zlabel="""+ str(s_filer) +""",
         fill=\ConvColor,
+        height="""+ str(height) +""",
+        width="""+ str(width) +""",
+        depth="""+ str(depth) +"""
+        }
+    };
+"""
+
+def to_ConvRelu( name, s_filer=256, n_filer=64, offset="(0,0,0)", to="(0,0,0)", width=1, height=40, depth=40, caption=" " ):
+    return r"""
+\pic[shift={"""+ offset +"""}] at """+ to +""" 
+    {RightBandedBox={
+        name=""" + name +""",
+        caption="""+ caption +r""",
+        xlabel={{"""+ str(n_filer) +""", }},
+        zlabel="""+ str(s_filer) +""",
+        fill=\ConvColor,
+        bandfill=\ConvReluColor,
         height="""+ str(height) +""",
         width="""+ str(width) +""",
         depth="""+ str(depth) +"""
@@ -76,6 +112,39 @@ def to_ConvConvRelu( name, s_filer=256, n_filer=(64,64), offset="(0,0,0)", to="(
     };
 """
 
+def to_ConvConvConvPrelu( name, s_filer=256, n_filer=(64,64,64), offset="(0,0,0)", to="(0,0,0)", width=(2,2,2), height=40, depth=40, caption=" " ):
+    x = r"""
+\pic[shift={ """+ offset +""" }] at """+ to +""" 
+    {RightBandedBox={
+        name="""+ name +""",
+        caption="""+ caption +""",
+        zlabel="""+ str(s_filer) +""",
+        fill=\ConvColor,
+        bandfill=\ConvReluColor,
+        height="""+ str(height) +""",
+        width={ """+ str(width[0]) +""" , """+ str(width[1]) +""", """+ str(width[2]) +""" },
+        depth="""+ str(depth) +"""
+        }
+    };
+"""
+    return x
+
+def to_CGblock( name, s_filer=256, offset="(0,0,0)", to="(0,0,0)", number=21, width=2, height=40, depth=40, opacity=0.9, caption=" " ):
+    width_string = str(width) + (', ' + str(width)) * (number-1)
+    return r"""
+\pic[shift={ """+ offset +""" }] at """+ to +""" 
+    {Box={
+        name="""+ name +""",
+        caption="""+ caption +""",
+        zlabel="""+ str(s_filer) +""",
+        fill=\CgBlockColor,
+        opacity="""+ str(opacity) +""",
+        height="""+ str(height) +""",
+        width={""" + width_string + """},
+        depth="""+ str(depth) +"""
+        }
+    };
+"""
 
 
 # Pool
@@ -110,7 +179,36 @@ def to_UnPool(name, offset="(0,0,0)", to="(0,0,0)", width=1, height=32, depth=32
     };
 """
 
+def to_UpSample(name, offset="(0,0,0)", to="(0,0,0)", width=1, height=32, depth=32, opacity=0.5, caption=" "):
+    return r"""
+\pic[shift={ """+ offset +""" }] at """+ to +""" 
+    {Box={
+        name="""+ name +r""",
+        caption="""+ caption +r""",
+        fill=\UpsampleColor,
+        opacity="""+ str(opacity) +""",
+        height="""+ str(height) +""",
+        width="""+ str(width) +""",
+        depth="""+ str(depth) +"""
+        }
+    };
+"""
 
+def to_ConvTranspose( name, s_filer=256, n_filer=64, offset="(0,0,0)", to="(0,0,0)", width=6, height=40, depth=40, opacity=0.2, caption=" " ):
+    return r"""
+\pic[shift={ """+ offset +""" }] at """+ to +""" 
+    {Box={
+        name="""+ name + """,
+        caption="""+ caption + """,
+        xlabel={{ """+ str(n_filer) + """, }},
+        fill={rgb:white,1;black,3},
+        opacity="""+ str(opacity) +""",
+        height="""+ str(height) +""",
+        width="""+ str(width) +""",
+        depth="""+ str(depth) +"""
+        }
+    };
+"""
 
 def to_ConvRes( name, s_filer=256, n_filer=64, offset="(0,0,0)", to="(0,0,0)", width=6, height=40, depth=40, opacity=0.2, caption=" " ):
     return r"""
@@ -178,6 +276,18 @@ def to_Sum( name, offset="(0,0,0)", to="(0,0,0)", radius=2.5, opacity=0.6):
     };
 """
 
+def to_Node( name, offset="(0,0,0)", to="(0,0,0)", radius=1.5, opacity=0.6):
+    return r"""
+\pic[shift={"""+ offset +"""}] at """+ to +""" 
+    {Ball={
+        name=""" + name +""",
+        fill=\SumColor,
+        opacity="""+ str(opacity) +""",
+        radius="""+ str(radius) +""",
+        logo=$$
+        }
+    };
+"""
 
 def to_connection( of, to):
     return r"""
@@ -189,6 +299,16 @@ def to_skip( of, to, pos=1.25):
 \path ("""+ of +"""-southeast) -- ("""+ of +"""-northeast) coordinate[pos="""+ str(pos) +"""] ("""+ of +"""-top) ;
 \path ("""+ to +"""-south)  -- ("""+ to +"""-north)  coordinate[pos="""+ str(pos) +"""] ("""+ to +"""-top) ;
 \draw [copyconnection]  ("""+of+"""-northeast)  
+-- node {\copymidarrow}("""+of+"""-top)
+-- node {\copymidarrow}("""+to+"""-top)
+-- node {\copymidarrow} ("""+to+"""-north);
+"""
+
+def to_inject( of, to, pos=1.25):
+    return r"""
+\path ("""+ of +"""-south) -- ("""+ of +"""-north) coordinate[pos="""+ str(pos) +"""] ("""+ of +"""-top) ;
+\path ("""+ to +"""-south)  -- ("""+ to +"""-north)  coordinate[pos="""+ str(pos) +"""] ("""+ to +"""-top) ;
+\draw [copyconnection]  ("""+of+"""-north)  
 -- node {\copymidarrow}("""+of+"""-top)
 -- node {\copymidarrow}("""+to+"""-top)
 -- node {\copymidarrow} ("""+to+"""-north);
