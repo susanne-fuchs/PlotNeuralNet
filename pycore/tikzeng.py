@@ -276,7 +276,7 @@ def to_Sum( name, offset="(0,0,0)", to="(0,0,0)", radius=2.5, opacity=0.6):
     };
 """
 
-def to_Node( name, offset="(0,0,0)", to="(0,0,0)", radius=1.5, opacity=0.6):
+def to_Node( name, offset="(0,0,0)", to="(0,0,0)", radius=1.5, opacity=0.6, logo=""):
     return r"""
 \pic[shift={"""+ offset +"""}] at """+ to +""" 
     {Ball={
@@ -284,7 +284,7 @@ def to_Node( name, offset="(0,0,0)", to="(0,0,0)", radius=1.5, opacity=0.6):
         fill=\SumColor,
         opacity="""+ str(opacity) +""",
         radius="""+ str(radius) +""",
-        logo=$$
+        logo="""+logo+"""
         }
     };
 """

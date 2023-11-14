@@ -10,7 +10,7 @@ arch = [
     to_begin(),
     
     #input
-    to_input('../images/ParamPlot_TMQ_mirrored.png' , name="image", width=12, height=8),
+    to_input('../images/ParamPlot_TMQ_data-2013-09-27-01-1_0_mirrored.png', name="image", width=12, height=8),
     to_Image("image_box", offset="(-0.6,0,0)", to="(image)", width=3, height=40, depth=60, opacity=0,
              caption="16 channels"),
 
